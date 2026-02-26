@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>AutoVis AI – Video Marketing Tự Động</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060612;--s1:#0e0e20;--s2:#161628;--s3:#1e1e35;
+  --br:rgba(255,255,255,0.07);--br2:rgba(255,255,255,0.12);
+  --ac:#9333EA;--ac2:#F59E0B;--ac3:#10B981;--ac4:#EC4899;
+  --tx:#F0EEFF;--tx2:#9090B0;--tx3:#6060A0;
+  --gl:rgba(147,51,234,0.25);--gl2:rgba(245,158,11,0.2);
+  --r:18px;--r2:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+
+/* GRID BG */
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(147,51,234,.02) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(147,51,234,.02) 1px,transparent 1px);
+  background-size:48px 48px;pointer-events:none;z-index:0}
+
+/* GLOW ORBS */
+.orb1,.orb2{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;opacity:.35}
+.orb1{width:500px;height:500px;background:radial-gradient(#9333EA,transparent);top:-100px;left:-100px}
+.orb2{width:400px;height:400px;background:radial-gradient(#EC4899,transparent);bottom:-80px;right:-80px}
+
+.wrap{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:16px 14px 110px}
+
+/* ── HEADER ── */
+.header{text-align:center;padding:40px 0 30px}
+.logo-row{display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,rgba(147,51,234,.12),rgba(236,72,153,.08));
+  border:1px solid rgba(147,51,234,.25);border-radius:50px;
+  padding:8px 20px;margin-bottom:26px;box-shadow:0 0 30px var(--gl)}
+.logo-icon{width:34px;height:34px;
+  background:linear-gradient(135deg,#9333EA,#EC4899);
+  border-radius:10px;display:grid;place-items:center;font-size:18px}
+.logo-txt{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;
+  background:linear-gradient(135deg,#C084FC,#FB923C);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1{font-family:'Syne',sans-serif;font-size:clamp(26px,5.5vw,46px);font-weight:800;
+  line-height:1.12;margin-bottom:14px}
+h1 .g1{background:linear-gradient(135deg,#C084FC,#EC4899);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h1 .g2{background:linear-gradient(135deg,#FB923C,#FBBF24);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{color:var(--tx2);font-size:15px;line-height:1.65;max-width:500px;margin:0 auto 14px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.pill{background:rgba(147,51,234,.1);border:1px solid rgba(147,51,234,.2);
+  color:#C084FC;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
+
+/* ── CARDS ── */
+.card{background:var(--s1);border:1px solid var(--br);border-radius:var(--r);
+  padding:22px;margin-bottom:12px;position:relative;overflow:hidden;
+  transition:border-color .3s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(147,51,234,.4),transparent)}
+.card-hd{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;
+  color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.step-num{background:linear-gradient(135deg,#9333EA,#EC4899);
+  color:white;font-size:10px;font-weight:800;padding:2px 8px;
+  border-radius:20px;letter-spacing:.05em}
+
+/* ── API CARD ── */
+.api-card{background:linear-gradient(135deg,rgba(147,51,234,.07),rgba(236,72,153,.05));
+  border:1px solid rgba(147,51,234,.2);border-radius:var(--r);padding:20px;margin-bottom:12px}
+.api-hd{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+  margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.free-tag{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);
+  color:#34D399;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px}
+.api-info{font-size:13px;color:var(--tx2);line-height:1.65;margin-bottom:14px}
+.api-link{color:#C084FC;font-weight:700;text-decoration:none}
+.api-link:hover{text-decoration:underline}
+
+/* ── INPUTS ── */
+.ig{position:relative;margin-bottom:11px}
+.ig input,.ig select{
+  width:100%;background:var(--s2);border:1.5px solid var(--br);
+  border-radius:var(--r2);padding:13px 14px 13px 42px;
+  color:var(--tx);font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;
+  transition:all .25s;outline:none;-webkit-appearance:none}
+.ig select{cursor:pointer}
+.ig input:focus,.ig select:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(147,51,234,.12)}
+.ig input::placeholder{color:var(--tx3)}
+.ig-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  font-size:17px;pointer-events:none}
+.kw{position:relative}
+.kw input{padding-right:42px!important}
+.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--tx2);cursor:pointer;font-size:18px;padding:2px}
+
+/* ── UPLOAD ZONE ── */
+.or{display:flex;align-items:center;gap:10px;color:var(--tx3);font-size:13px;margin:10px 0}
+.or::before,.or::after{content:'';flex:1;height:1px;background:var(--br)}
+.upz{border:2px dashed var(--br);border-radius:14px;padding:26px 16px;
+  text-align:center;cursor:pointer;transition:all .25s;position:relative}
+.upz:hover,.upz.drag{border-color:var(--ac);background:rgba(147,51,234,.04)}
+.upz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.up-icon{font-size:30px;display:block;margin-bottom:8px}
+.up-txt{font-size:14px;font-weight:600;margin-bottom:3px}
+.up-hint{font-size:12px;color:var(--tx2)}
+.up-prev{display:none;position:relative}
+.up-prev img{max-width:100%;max-height:170px;border-radius:10px;object-fit:cover}
+.rm{position:absolute;top:-8px;right:-8px;background:#EF4444;color:white;
+  border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;
+  font-size:13px;display:grid;place-items:center}
+
+/* ── AVATAR GRID ── */
+.av-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.av{background:var(--s2);border:2px solid var(--br);border-radius:12px;
+  padding:12px 6px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;line-height:1.4}
+.av:hover{border-color:var(--ac);background:rgba(147,51,234,.08)}
+.av.sel{border-color:var(--ac);background:rgba(147,51,234,.12);color:#C084FC}
+.av em{font-size:22px;display:block;margin-bottom:4px;font-style:normal}
+.av small{color:var(--tx2);font-size:10px}
+
+/* ── DURATION SLIDER ── */
+.dur-row{display:flex;align-items:center;gap:12px;margin-top:12px}
+.dur-row label{font-size:13px;color:var(--tx2);white-space:nowrap;min-width:80px}
+.dur-row input[type=range]{flex:1;accent-color:var(--ac)}
+.dur-val{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;
+  color:#C084FC;min-width:40px;text-align:right}
+
+/* ── CREATE BTN ── */
+.btn-create{width:100%;
+  background:linear-gradient(135deg,#9333EA,#EC4899);
+  color:white;border:none;border-radius:14px;padding:18px;
+  font-family:'Syne',sans-serif;font-size:17px;font-weight:700;
+  cursor:pointer;transition:all .25s;position:relative;overflow:hidden;
+  box-shadow:0 6px 24px rgba(147,51,234,.4);margin-top:8px;letter-spacing:.02em}
+.btn-create::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);
+  opacity:0;transition:opacity .25s}
+.btn-create:hover::before{opacity:1}
+.btn-create:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(147,51,234,.5)}
+.btn-create:active{transform:translateY(0)}
+.btn-create:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ── PROGRESS ── */
+.prog-card{display:none;background:var(--s1);border:1px solid var(--br);
+  border-radius:var(--r);padding:24px;margin-bottom:12px}
+.prog-hd{font-size:14px;font-weight:600;margin-bottom:12px;
+  display:flex;align-items:center;gap:9px}
+.spin{width:17px;height:17px;border:2px solid var(--br);
+  border-top-color:var(--ac);border-radius:50%;
+  animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pb{background:var(--s2);border-radius:100px;height:8px;overflow:hidden;margin-bottom:8px}
+.pb-f{height:100%;background:linear-gradient(90deg,#9333EA,#EC4899,#FB923C);
+  border-radius:100px;transition:width .6s ease;position:relative}
+.pb-f::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+  animation:sh 1.8s infinite}
+@keyframes sh{from{transform:translateX(-100%)}to{transform:translateX(220%)}}
+.pb-pct{font-size:12px;color:var(--tx2);text-align:right;margin-bottom:14px}
+
+/* Product info card inside progress */
+.prod-preview{background:var(--s2);border:1px solid var(--br);
+  border-radius:12px;padding:14px;margin-bottom:14px;
+  display:none;font-size:13px;line-height:1.7}
+.prod-preview .pp-title{font-weight:700;font-size:14px;margin-bottom:6px;color:var(--tx)}
+.prod-preview .pp-row{display:flex;gap:8px;flex-wrap:wrap}
+.pp-tag{background:rgba(147,51,234,.1);border:1px solid rgba(147,51,234,.2);
+  color:#C084FC;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600}
+
+.steps{display:flex;flex-direction:column;gap:7px}
+.si{display:flex;align-items:center;gap:9px;padding:9px 12px;
+  border-radius:10px;background:var(--s2);font-size:13px;opacity:.35;transition:all .3s}
+.si.act{opacity:1;background:rgba(147,51,234,.1);border:1px solid rgba(147,51,234,.2)}
+.si.done{opacity:1;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2);color:#34D399}
+.si-d{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ── RESULT ── */
+.res-card{display:none;background:var(--s1);
+  border:1px solid rgba(16,185,129,.25);border-radius:var(--r);
+  padding:24px;margin-bottom:12px}
+.res-hd{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;
+  margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ai-badge{background:linear-gradient(135deg,rgba(147,51,234,.2),rgba(236,72,153,.15));
+  border:1px solid rgba(147,51,234,.3);color:#C084FC;
+  font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px}
+
+/* Product detail in result */
+.prod-detail{background:var(--s2);border:1px solid var(--br);border-radius:12px;
+  padding:14px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
+.pd-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.pd-tag{background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);
+  color:#F9A8D4;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+
+.vid-wrap{background:#000;border-radius:14px;overflow:hidden;
+  margin-bottom:14px;text-align:center;min-height:100px;
+  display:flex;align-items:center;justify-content:center}
+.vid-wrap video{max-width:100%;max-height:450px;display:block;margin:0 auto}
+.vid-ph{padding:50px;color:var(--tx2);font-size:40px}
+
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
+.btn-a{display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:12px 14px;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;border:none}
+.btn-dl{background:linear-gradient(135deg,#10B981,#059669);color:white;
+  box-shadow:0 4px 16px rgba(16,185,129,.3)}
+.btn-dl:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,.4)}
+.btn-cp{background:var(--s2);color:var(--tx);border:1px solid var(--br)}
+.btn-cp:hover{background:rgba(147,51,234,.1);border-color:rgba(147,51,234,.3)}
+.btn-cp.ok{color:#10B981;border-color:rgba(16,185,129,.3)}
+
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--tx2);margin-bottom:7px}
+.script-box{background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.15);
+  border-radius:11px;padding:13px;font-size:13px;line-height:1.75;
+  color:#FCD34D;font-style:italic;margin-bottom:10px;white-space:pre-wrap}
+.tabs{display:flex;gap:7px;margin-bottom:9px;flex-wrap:wrap}
+.tab{padding:5px 12px;border-radius:8px;border:1px solid var(--br);
+  background:transparent;color:var(--tx2);font-size:12px;cursor:pointer;
+  transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif}
+.tab.act{background:rgba(147,51,234,.15);border-color:rgba(147,51,234,.4);color:#C084FC}
+.cap-box{background:var(--s2);border:1px solid var(--br);border-radius:11px;
+  padding:13px;font-size:13px;line-height:1.75;white-space:pre-wrap;word-break:break-word;margin-bottom:9px}
+.hash-box{background:rgba(147,51,234,.07);border:1px solid rgba(147,51,234,.18);
+  border-radius:11px;padding:13px;font-size:13px;color:#C084FC;
+  line-height:1.75;word-break:break-word}
+
+/* ── ERROR ── */
+.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);
+  border-radius:11px;padding:12px 14px;color:#FCA5A5;font-size:13px;
+  display:none;margin-top:10px}
+
+/* ── RESET ── */
+.btn-reset{width:100%;background:transparent;border:1px solid var(--br);
+  color:var(--tx2);border-radius:11px;padding:12px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;
+  cursor:pointer;transition:all .2s;margin-top:10px}
+.btn-reset:hover{border-color:var(--ac);color:var(--tx)}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:22px;right:16px;
+  background:linear-gradient(135deg,#F59E0B,#D97706);color:white;
+  border:none;border-radius:50px;padding:11px 18px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:13px;
+  cursor:pointer;box-shadow:0 4px 18px rgba(245,158,11,.4);
+  z-index:100;display:flex;align-items:center;gap:7px;transition:all .25s}
+.fab:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(245,158,11,.5)}
+
+/* ── MODAL ── */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.85);
+  backdrop-filter:blur(10px);z-index:200;display:none;
+  place-items:center;padding:16px}
+.mo.open{display:grid}
+.modal{background:var(--s1);border:1px solid var(--br);
+  border-radius:22px;padding:26px;max-width:480px;width:100%;
+  max-height:90vh;overflow-y:auto;position:relative;
+  animation:mi .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mi{from{opacity:0;transform:scale(.9) translateY(24px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.mo-x{position:absolute;top:14px;right:14px;background:var(--s2);
+  border:1px solid var(--br);color:var(--tx2);width:30px;height:30px;
+  border-radius:50%;cursor:pointer;display:grid;place-items:center;
+  font-size:15px;transition:all .2s}
+.mo-x:hover{background:rgba(239,68,68,.2);color:#EF4444}
+.modal h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:5px}
+.mo-sub{color:var(--tx2);font-size:13px;margin-bottom:20px}
+.gs{display:flex;gap:12px;margin-bottom:18px;align-items:flex-start}
+.gn{width:34px;height:34px;flex-shrink:0;
+  background:linear-gradient(135deg,#9333EA,#EC4899);
+  border-radius:9px;display:grid;place-items:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:white}
+.gc h3{font-weight:700;font-size:14px;margin-bottom:3px}
+.gc p{font-size:13px;color:var(--tx2);line-height:1.6}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:72px;left:50%;
+  transform:translateX(-50%) translateY(14px);
+  background:#10B981;color:white;padding:11px 22px;border-radius:50px;
+  font-size:13px;font-weight:700;opacity:0;transition:all .3s;z-index:300;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:480px){
+  .card,.api-card{padding:18px 14px}
+  .av-grid{grid-template-columns:repeat(2,1fr)}
+  .btn-row{grid-template-columns:1fr}
+  .fab{bottom:14px;right:10px;padding:10px 14px;font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="orb1"></div>
+<div class="orb2"></div>
+
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo-row">
+    <div class="logo-icon">🎬</div>
+    <span class="logo-txt">AutoVis AI</span>
+  </div>
+  <h1><span class="g1">Video Marketing</span><br><span class="g2">Tự Động Bằng AI</span></h1>
+  <p class="sub">Chỉ cần dán link hoặc upload ảnh — AI tự động phân tích sản phẩm, tạo người mẫu, giọng nói và xuất video TikTok sẵn sàng đăng</p>
+  <div class="pills">
+    <span class="pill">✨ HeyGen AI Avatar</span>
+    <span class="pill">🎙️ Giọng Việt tự nhiên</span>
+    <span class="pill">📱 Chuẩn TikTok 9:16</span>
+    <span class="pill">⚡ Auto 20–30 giây</span>
+  </div>
+</div>
+
+<!-- API KEY -->
+<div class="api-card" id="apiCard">
+  <div class="api-hd">🔑 HeyGen API Key <span class="free-tag">FREE $5 credit</span></div>
+  <div class="api-info">
+    Đăng ký tại <a class="api-link" href="https://app.heygen.com" target="_blank">app.heygen.com</a>
+    → Settings → API → Generate Key &nbsp;·&nbsp;
+    <strong>$5 credit miễn phí</strong> (~3–5 video người mẫu AI)<br>
+    <span style="color:var(--tx3)">Không có key → App vẫn tạo video nhưng không có người mẫu AI</span>
+  </div>
+  <div class="ig kw">
+    <span class="ig-ic">🔑</span>
+    <input type="password" id="apiKey" placeholder="Dán HeyGen API key vào đây...">
+    <button class="eye" onclick="toggleEye()" title="Hiện/ẩn">👁</button>
+  </div>
+</div>
+
+<!-- STEP 1: Product -->
+<div class="card">
+  <div class="card-hd">📦 Sản phẩm <span class="step-num">BƯỚC 1</span></div>
+  <div class="ig">
+    <span class="ig-ic">🔗</span>
+    <input type="text" id="urlInp" placeholder="Dán link Shopee, Lazada, TikTok Shop, Tiki...">
+  </div>
+  <div class="or">hoặc</div>
+  <div class="upz" id="upz">
+    <input type="file" id="imgInp" accept="image/*">
+    <div id="upPh">
+      <span class="up-icon">📸</span>
+      <div class="up-txt">Upload ảnh sản phẩm</div>
+      <div class="up-hint">JPG, PNG, WebP · Tối đa 15MB</div>
+    </div>
+    <div class="up-prev" id="upPrev">
+      <img id="prevImg" src="" alt="">
+      <button class="rm" onclick="rmImg(event)">✕</button>
+    </div>
+  </div>
+  <div class="err" id="errMsg"></div>
+</div>
+
+<!-- STEP 2: Avatar & Voice -->
+<div class="card">
+  <div class="card-hd">👤 Người mẫu AI <span class="step-num">BƯỚC 2</span></div>
+  <div class="av-grid" id="avGrid">
+    <div class="av sel" data-id="Abigail_expressive_2024112501" onclick="selAv(this)">
+      <em>👩</em>Abigail<br><small>Trẻ trung</small>
+    </div>
+    <div class="av" data-id="Angela-inblackskirt-20220820" onclick="selAv(this)">
+      <em>👩‍💼</em>Angela<br><small>Chuyên nghiệp</small>
+    </div>
+    <div class="av" data-id="Anna_public_3_20240108" onclick="selAv(this)">
+      <em>🧑‍🦰</em>Anna<br><small>Thân thiện</small>
+    </div>
+    <div class="av" data-id="Emily-inpinkskirt-20220820" onclick="selAv(this)">
+      <em>💃</em>Emily<br><small>Năng động</small>
+    </div>
+    <div class="av" data-id="Susan-inbluetshirt-20220821" onclick="selAv(this)">
+      <em>🙋‍♀️</em>Susan<br><small>Tự nhiên</small>
+    </div>
+    <div class="av" data-id="Lily-inpinkskirt-20220822" onclick="selAv(this)">
+      <em>🌸</em>Lily<br><small>Dịu dàng</small>
+    </div>
+  </div>
+
+  <div class="ig">
+    <span class="ig-ic">🎙️</span>
+    <select id="voiceSel">
+      <option value="vi-VN-HoaiMyNeural">Hoài My – Giọng nữ miền Nam (Khuyến nghị)</option>
+      <option value="vi-VN-NamMinhNeural">Nam Minh – Giọng nam</option>
+      <option value="vi-VN-Standard-A">Giọng nữ chuẩn Việt</option>
+    </select>
+  </div>
+
+  <div class="dur-row">
+    <label>⏱️ Thời lượng</label>
+    <input type="range" id="durRange" min="20" max="30" value="25" oninput="updDur()">
+    <span class="dur-val" id="durVal">25s</span>
+  </div>
+</div>
+
+<!-- CREATE BTN -->
+<button class="btn-create" id="createBtn" onclick="startCreate()">
+  🚀 TẠO VIDEO AI NGAY
+</button>
+
+<!-- PROGRESS -->
+<div class="prog-card" id="progCard">
+  <div class="prog-hd"><div class="spin"></div><span id="stepTxt">Đang chuẩn bị...</span></div>
+  <div class="pb"><div class="pb-f" id="pbF" style="width:0%"></div></div>
+  <div class="pb-pct" id="pbPct">0%</div>
+
+  <div class="prod-preview" id="prodPreview">
+    <div class="pp-title" id="ppTitle"></div>
+    <div class="pp-row" id="ppTags"></div>
+  </div>
+
+  <div class="steps">
+    <div class="si" id="s1"><div class="si-d"></div>🔍 Phân tích sản phẩm</div>
+    <div class="si" id="s2"><div class="si-d"></div>✍️ Tạo script tiếng Việt</div>
+    <div class="si" id="s3"><div class="si-d"></div>🤖 Tạo người mẫu AI (HeyGen)</div>
+    <div class="si" id="s4"><div class="si-d"></div>🎬 Render video + giọng đọc</div>
+    <div class="si" id="s5"><div class="si-d"></div>✅ Hoàn tất</div>
+  </div>
+  <div style="margin-top:13px;font-size:12px;color:var(--tx2);text-align:center">
+    ⏱️ HeyGen thường mất 2–5 phút. Vui lòng không tắt trang!
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="res-card" id="resCard">
+  <div class="res-hd">🎉 Video sẵn sàng! <span class="ai-badge" id="hgBadge" style="display:none">✨ HeyGen AI</span></div>
+
+  <!-- Product detail -->
+  <div class="prod-detail" id="prodDetail" style="display:none">
+    <div style="flex:1">
+      <div style="font-weight:700;font-size:14px;margin-bottom:5px" id="detTitle"></div>
+      <div style="font-size:13px;color:var(--tx2)" id="detPrice"></div>
+      <div class="pd-tags" id="detTags"></div>
+    </div>
+  </div>
+
+  <div class="vid-wrap" id="vidWrap">
+    <div class="vid-ph">🎬</div>
+  </div>
+
+  <div class="btn-row">
+    <a id="dlBtn" class="btn-a btn-dl" href="#" download>⬇️ Tải Video</a>
+    <button class="btn-a btn-cp" onclick="cpLink(this)">🔗 Copy Link</button>
+  </div>
+
+  <!-- Script -->
+  <div style="margin-bottom:16px">
+    <div class="sec-lbl">📢 Script AI</div>
+    <div class="script-box" id="scriptBox"></div>
+    <button class="btn-a btn-cp" style="width:100%" onclick="cpScript(this)">📋 Copy Script</button>
+  </div>
+
+  <!-- Captions -->
+  <div>
+    <div class="sec-lbl">📝 Caption TikTok</div>
+    <div class="tabs" id="capTabs"></div>
+    <div class="cap-box" id="capBox"></div>
+    <div class="btn-row">
+      <button class="btn-a btn-cp" onclick="cpCap(this)">📋 Copy Caption</button>
+      <button class="btn-a btn-cp" onclick="cpHash(this)">🏷️ Copy Hashtag</button>
+    </div>
+    <div class="sec-lbl" style="margin-top:14px">🏷️ Hashtag</div>
+    <div class="hash-box" id="hashBox"></div>
+  </div>
+
+  <button class="btn-reset" onclick="reset()">🔄 Tạo video mới</button>
+</div>
+
+<div style="text-align:center;color:var(--tx3);font-size:12px;padding:16px 0">
+  AutoVis AI v4.0 · Powered by HeyGen · TikTok · Reels · Shorts
+</div>
+</div><!-- wrap -->
+
+<button class="fab" onclick="openGuide()">📖 Hướng dẫn</button>
+
+<!-- GUIDE MODAL -->
+<div class="mo" id="mo" onclick="closeOut(event)">
+  <div class="modal">
+    <button class="mo-x" onclick="closeMo()">✕</button>
+    <h2>📖 Hướng dẫn sử dụng</h2>
+    <p class="mo-sub">Tạo video người mẫu AI trong vài phút</p>
+    <div class="gs"><div class="gn">1</div><div class="gc">
+      <h3>Lấy HeyGen API Key miễn phí</h3>
+      <p>Vào app.heygen.com → Đăng ký Gmail → Settings → API → Generate Key. Nhận $5 credit (~3–5 video).</p>
+    </div></div>
+    <div class="gs"><div class="gn">2</div><div class="gc">
+      <h3>Dán key vào ô phía trên</h3>
+      <p>Không có key vẫn dùng được — chỉ không có người mẫu AI nói.</p>
+    </div></div>
+    <div class="gs"><div class="gn">3</div><div class="gc">
+      <h3>Dán link hoặc upload ảnh sản phẩm</h3>
+      <p>Hỗ trợ Shopee, Lazada, TikTok Shop, Tiki hoặc ảnh chụp thẳng từ điện thoại.</p>
+    </div></div>
+    <div class="gs"><div class="gn">4</div><div class="gc">
+      <h3>Chọn người mẫu & giọng đọc</h3>
+      <p>6 người mẫu AI, 3 giọng tiếng Việt, tùy chỉnh thời lượng 20–30 giây.</p>
+    </div></div>
+    <div class="gs"><div class="gn">5</div><div class="gc">
+      <h3>Nhấn "Tạo Video AI" và đợi</h3>
+      <p>2–5 phút với HeyGen. Tải video → copy caption + hashtag → đăng TikTok ngay!</p>
+    </div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let curJob=null,timer=null,caps=[],hashes=[],curCap=0;
+let selAvatar="Abigail_expressive_2024112501";
+
+// Upload
+const imgInp=document.getElementById('imgInp');
+const upz=document.getElementById('upz');
+imgInp.addEventListener('change',e=>{if(e.target.files[0])showPrev(e.target.files[0])});
+upz.addEventListener('dragover',e=>{e.preventDefault();upz.classList.add('drag')});
+upz.addEventListener('dragleave',()=>upz.classList.remove('drag'));
+upz.addEventListener('drop',e=>{
+  e.preventDefault();upz.classList.remove('drag');
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('image/')){
+    const dt=new DataTransfer();dt.items.add(f);imgInp.files=dt.files;showPrev(f);
+  }
+});
+function showPrev(f){
+  const r=new FileReader();
+  r.onload=e=>{
+    document.getElementById('prevImg').src=e.target.result;
+    document.getElementById('upPh').style.display='none';
+    document.getElementById('upPrev').style.display='block';
+  };
+  r.readAsDataURL(f);
+}
+function rmImg(e){
+  e.stopPropagation();imgInp.value='';
+  document.getElementById('prevImg').src='';
+  document.getElementById('upPh').style.display='block';
+  document.getElementById('upPrev').style.display='none';
+}
+
+function selAv(el){
+  document.querySelectorAll('.av').forEach(a=>a.classList.remove('sel'));
+  el.classList.add('sel');selAvatar=el.dataset.id;
+}
+function toggleEye(){
+  const i=document.getElementById('apiKey');
+  i.type=i.type==='password'?'text':'password';
+}
+function updDur(){
+  document.getElementById('durVal').textContent=document.getElementById('durRange').value+'s';
+}
+
+async function startCreate(){
+  const url=document.getElementById('urlInp').value.trim();
+  const file=imgInp.files[0];
+  const err=document.getElementById('errMsg');
+  err.style.display='none';
+  if(!url&&!file){err.textContent='⚠️ Vui lòng nhập link hoặc upload ảnh sản phẩm.';err.style.display='block';return;}
+
+  document.getElementById('createBtn').disabled=true;
+  ['apiCard','card','avatarBlock'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none'});
+  // hide all cards except progress
+  document.querySelectorAll('.card,.api-card').forEach(c=>c.style.display='none');
+  document.getElementById('progCard').style.display='block';
+  document.getElementById('resCard').style.display='none';
+
+  const fd=new FormData();
+  if(url)fd.append('product_url',url);
+  if(file)fd.append('image',file);
+  const key=document.getElementById('apiKey').value.trim();
+  if(key)fd.append('api_key',key);
+  fd.append('avatar_id',selAvatar);
+  fd.append('voice_id',document.getElementById('voiceSel').value);
+  fd.append('duration',document.getElementById('durRange').value);
+
+  try{
+    const r=await fetch('/api/create',{method:'POST',body:fd});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.detail||'Lỗi server');
+    curJob=d.job_id;poll(curJob);
+  }catch(e){showErr(e.message);}
+}
+
+function poll(jid){
+  resetSteps();
+  timer=setInterval(async()=>{
+    try{
+      const r=await fetch(`/api/job/${jid}`);
+      const j=await r.json();
+      updProg(j);
+      // Show product info when available
+      if(j.product_info){showProdPreview(j.product_info);}
+      if(j.status==='done'||j.status==='error'){
+        clearInterval(timer);
+        if(j.status==='done')showResult(j.result);
+        else showErr(j.step||'Lỗi xử lý');
+      }
+    }catch(e){}
+  },1500);
+}
+
+function updProg(j){
+  document.getElementById('stepTxt').textContent=j.step||'';
+  const p=j.progress||0;
+  document.getElementById('pbF').style.width=p+'%';
+  document.getElementById('pbPct').textContent=p+'%';
+  const map=[{id:'s1',t:15},{id:'s2',t:28},{id:'s3',t:50},{id:'s4',t:85},{id:'s5',t:100}];
+  map.forEach(({id,t})=>{
+    const el=document.getElementById(id);el.className='si';
+    if(p>=t)el.classList.add('done');
+    else if(p>=t-20)el.classList.add('act');
+  });
+}
+
+function showProdPreview(info){
+  const pp=document.getElementById('prodPreview');
+  if(pp.style.display==='block')return;
+  document.getElementById('ppTitle').textContent=info.title||'';
+  const tags=document.getElementById('ppTags');
+  tags.innerHTML='';
+  const items=[info.gender,info.age,info.platform].filter(Boolean);
+  items.forEach(t=>{const s=document.createElement('span');s.className='pp-tag';s.textContent=t;tags.appendChild(s);});
+  pp.style.display='block';
+}
+
+function resetSteps(){['s1','s2','s3','s4','s5'].forEach(id=>document.getElementById(id).className='si');}
+
+function showResult(res){
+  document.getElementById('progCard').style.display='none';
+  const rc=document.getElementById('resCard');rc.style.display='block';
+
+  if(res.used_heygen)document.getElementById('hgBadge').style.display='inline-flex';
+
+  // Product detail
+  const pd=document.getElementById('prodDetail');
+  const p=res.product||{};
+  if(p.title){
+    document.getElementById('detTitle').textContent=p.title||'';
+    document.getElementById('detPrice').textContent=p.price?`💰 ${p.price}`:'';
+    const dt=document.getElementById('detTags');dt.innerHTML='';
+    [p.gender,p.age_label,p.platform,p.style].filter(Boolean).forEach(t=>{
+      const s=document.createElement('span');s.className='pd-tag';s.textContent=t;dt.appendChild(s);
+    });
+    pd.style.display='flex';
+  }
+
+  // Video
+  const vw=document.getElementById('vidWrap');
+  if(res.video_url){
+    vw.querySelector('.vid-ph')&&(vw.querySelector('.vid-ph').style.display='none');
+    const v=document.createElement('video');
+    v.src=res.video_url;v.controls=true;v.playsInline=true;
+    v.style.maxWidth='100%';v.style.maxHeight='450px';
+    vw.appendChild(v);
+    document.getElementById('dlBtn').href=`/api/download/${res.video_filename}`;
+    document.getElementById('dlBtn').download=res.video_filename;
+  }
+
+  // Script
+  document.getElementById('scriptBox').textContent=res.script||'';
+
+  // Captions
+  caps=res.captions||[];hashes=res.hashtags||[];curCap=0;
+  const tabs=document.getElementById('capTabs');tabs.innerHTML='';
+  caps.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.className='tab'+(i===0?' act':'');
+    b.textContent=`Phiên bản ${i+1}`;
+    b.onclick=()=>swCap(i);tabs.appendChild(b);
+  });
+  if(caps.length)document.getElementById('capBox').textContent=caps[0];
+  document.getElementById('hashBox').textContent=res.main_hashtags||hashes[0]||'';
+  rc.scrollIntoView({behavior:'smooth'});
+}
+
+function swCap(i){
+  curCap=i;
+  document.getElementById('capBox').textContent=caps[i];
+  document.querySelectorAll('.tab').forEach((b,j)=>b.className='tab'+(j===i?' act':''));
+  if(hashes[i])document.getElementById('hashBox').textContent=hashes[i];
+}
+
+function cpScript(btn){clip(document.getElementById('scriptBox').textContent,btn);}
+function cpCap(btn){clip(document.getElementById('capBox').textContent,btn);}
+function cpHash(btn){clip(document.getElementById('hashBox').textContent,btn);}
+function cpLink(btn){
+  const v=document.querySelector('#vidWrap video');
+  if(v)clip(window.location.origin+v.getAttribute('src'),btn);
+}
+
+function clip(txt,btn){
+  navigator.clipboard.writeText(txt).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=txt;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  });
+  toast('✅ Đã copy!');
+  if(btn){const og=btn.innerHTML;btn.innerHTML='✅ Đã copy!';btn.classList.add('ok');
+    setTimeout(()=>{btn.innerHTML=og;btn.classList.remove('ok');},2000);}
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+function showErr(msg){
+  clearInterval(timer);
+  document.getElementById('progCard').style.display='none';
+  document.querySelectorAll('.card,.api-card').forEach(c=>c.style.display='block');
+  document.getElementById('createBtn').disabled=false;
+  const e=document.getElementById('errMsg');e.textContent='❌ '+msg;e.style.display='block';
+}
+
+function reset(){
+  clearInterval(timer);curJob=null;
+  document.getElementById('urlInp').value='';
+  imgInp.value='';document.getElementById('prevImg').src='';
+  document.getElementById('upPh').style.display='block';
+  document.getElementById('upPrev').style.display='none';
+  document.getElementById('errMsg').style.display='none';
+  document.getElementById('createBtn').disabled=false;
+  document.getElementById('resCard').style.display='none';
+  document.getElementById('progCard').style.display='none';
+  document.getElementById('prodPreview').style.display='none';
+  document.getElementById('hgBadge').style.display='none';
+  document.getElementById('prodDetail').style.display='none';
+  document.querySelectorAll('.card,.api-card').forEach(c=>c.style.display='block');
+  const ov=document.querySelector('#vidWrap video');if(ov)ov.remove();
+  const ph=document.querySelector('#vidWrap .vid-ph');if(ph)ph.style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function openGuide(){document.getElementById('mo').classList.add('open');}
+function closeMo(){document.getElementById('mo').classList.remove('open');}
+function closeOut(e){if(e.target===document.getElementById('mo'))closeMo();}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeMo();
+  if(e.key==='Enter'&&document.activeElement===document.getElementById('urlInp'))startCreate();
+});
+</script>
+</body>
+</html>
