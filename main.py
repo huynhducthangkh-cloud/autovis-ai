@@ -20,7 +20,7 @@ BASE   = Path(__file__).parent
 UPLOAD = BASE / "uploads";    UPLOAD.mkdir(exist_ok=True)
 OUTPUT = BASE / "outputs";    OUTPUT.mkdir(exist_ok=True)
 STATIC = BASE / "static";     STATIC.mkdir(exist_ok=True)
-MUSIC  = BASE / "assets/music"; MUSIC.mkdir(exist_ok=True)
+MUSIC  = BASE / "assets/music"; MUSIC.mkdir(parents=True, exist_ok=True)
 
 app.mount("/static",  StaticFiles(directory=str(STATIC)),  name="static")
 app.mount("/outputs", StaticFiles(directory=str(OUTPUT)),  name="outputs")
