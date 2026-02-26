@@ -1,1 +1,495 @@
+DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AutoVis AI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a1a;color:#f0eeff;min-height:100vh;padding:16px 14px 100px}
+.wrap{max-width:720px;margin:0 auto}
 
+/* HEADER */
+.header{text-align:center;padding:32px 0 24px}
+.logo{display:inline-block;background:#7c3aed;color:white;font-weight:800;font-size:16px;padding:8px 20px;border-radius:50px;margin-bottom:20px}
+h1{font-size:28px;font-weight:800;line-height:1.2;margin-bottom:10px;color:#c4b5fd}
+.sub{font-size:14px;color:#9090b0;line-height:1.6;margin-bottom:16px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.badge{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);color:#c4b5fd;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+
+/* CARD */
+.card{background:#111120;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6060a0;margin-bottom:14px}
+
+/* API CARD */
+.api-card{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:16px;padding:18px;margin-bottom:12px}
+.api-title{font-weight:700;font-size:14px;margin-bottom:6px}
+.api-desc{font-size:13px;color:#9090b0;line-height:1.6;margin-bottom:12px}
+.api-link{color:#a78bfa;font-weight:600}
+.free{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#34d399;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:8px}
+
+/* INPUTS */
+.field{position:relative;margin-bottom:10px}
+.field input,.field select{width:100%;background:#161628;border:1.5px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 14px 13px 40px;color:#f0eeff;font-size:15px;outline:none;-webkit-appearance:none;font-family:inherit}
+.field select{cursor:pointer}
+.field input:focus,.field select:focus{border-color:#7c3aed}
+.field input::placeholder{color:#4040608}
+.icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
+.key-wrap{position:relative}
+.key-wrap input{padding-right:42px!important}
+.eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#6060a0;cursor:pointer;font-size:18px;padding:4px}
+
+/* DIVIDER */
+.or{display:flex;align-items:center;gap:10px;color:#4040608;font-size:12px;margin:10px 0;color:#505080}
+.or::before,.or::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06)}
+
+/* UPLOAD */
+.upz{border:2px dashed rgba(255,255,255,.1);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s}
+.upz:hover,.upz.drag{border-color:#7c3aed;background:rgba(124,58,237,.04)}
+.upz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.up-icon{font-size:28px;display:block;margin-bottom:6px}
+.up-txt{font-size:14px;font-weight:600;margin-bottom:3px}
+.up-hint{font-size:12px;color:#6060a0}
+.up-prev{display:none;position:relative}
+.up-prev img{max-width:100%;max-height:160px;border-radius:10px;object-fit:cover}
+.rm{position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
+
+/* AVATAR */
+.av-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.av{background:#161628;border:2px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px}
+.av:hover{border-color:#7c3aed}
+.av.sel{border-color:#7c3aed;background:rgba(124,58,237,.12);color:#c4b5fd}
+.av em{font-size:20px;display:block;margin-bottom:4px;font-style:normal}
+.av small{color:#6060a0;font-size:10px}
+
+/* SLIDER */
+.dur{display:flex;align-items:center;gap:12px;margin-top:10px}
+.dur label{font-size:13px;color:#6060a0;white-space:nowrap}
+.dur input[type=range]{flex:1;accent-color:#7c3aed}
+.dur-val{font-weight:700;font-size:15px;color:#a78bfa;min-width:36px;text-align:right}
+
+/* BTN */
+.btn-create{width:100%;background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;border:none;border-radius:14px;padding:17px;font-size:17px;font-weight:700;cursor:pointer;margin-top:8px;box-shadow:0 6px 20px rgba(124,58,237,.4);transition:all .2s;font-family:inherit}
+.btn-create:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,58,237,.5)}
+.btn-create:active{transform:none}
+.btn-create:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* PROGRESS */
+.prog{display:none;background:#111120;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:20px;margin-bottom:12px}
+.prog-top{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.1);border-top-color:#7c3aed;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pb{background:#161628;border-radius:100px;height:7px;overflow:hidden;margin-bottom:6px}
+.pb-f{height:100%;background:linear-gradient(90deg,#7c3aed,#db2777,#f59e0b);border-radius:100px;transition:width .6s;width:0%}
+.pb-pct{font-size:12px;color:#6060a0;text-align:right;margin-bottom:14px}
+.steps{display:flex;flex-direction:column;gap:6px}
+.si{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:#161628;font-size:13px;opacity:.3;transition:all .3s}
+.si.act{opacity:1;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2)}
+.si.done{opacity:1;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2);color:#34d399}
+.si-d{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.wait-note{margin-top:12px;font-size:12px;color:#6060a0;text-align:center}
+
+/* RESULT */
+.result{display:none;background:#111120;border:1px solid rgba(16,185,129,.2);border-radius:16px;padding:20px;margin-bottom:12px}
+.res-title{font-size:18px;font-weight:800;margin-bottom:6px}
+.ai-tag{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.25);color:#c4b5fd;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:8px;display:none}
+
+.vid-box{background:#000;border-radius:12px;overflow:hidden;min-height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.vid-box video{max-width:100%;max-height:420px;display:block}
+.vid-ph{font-size:36px;padding:40px}
+
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.btn-dl{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-size:13px;font-weight:700;text-decoration:none;border:none;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-dl:hover{transform:translateY(-1px)}
+.btn-sec{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:10px;background:#161628;color:#f0eeff;font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,.08);cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-sec:hover{border-color:rgba(124,58,237,.4)}
+.btn-sec.ok{color:#10b981;border-color:rgba(16,185,129,.3)}
+
+.lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6060a0;margin-bottom:6px;margin-top:14px}
+.script-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:10px;padding:12px;font-size:13px;line-height:1.7;color:#fcd34d;font-style:italic;white-space:pre-wrap}
+.tabs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.tab{padding:4px 10px;border-radius:7px;border:1px solid rgba(255,255,255,.08);background:transparent;color:#6060a0;font-size:12px;cursor:pointer;transition:all .2s;font-family:inherit}
+.tab.act{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.3);color:#c4b5fd}
+.cap-box{background:#161628;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.hash-box{background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.15);border-radius:10px;padding:12px;font-size:13px;color:#a78bfa;line-height:1.7;word-break:break-word}
+
+/* ERROR */
+.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:12px;color:#fca5a5;font-size:13px;display:none;margin-top:10px}
+
+/* RESET */
+.btn-reset{width:100%;background:transparent;border:1px solid rgba(255,255,255,.08);color:#6060a0;border-radius:10px;padding:12px;font-size:13px;cursor:pointer;margin-top:10px;font-family:inherit;transition:all .2s}
+.btn-reset:hover{border-color:rgba(124,58,237,.3);color:#f0eeff}
+
+/* FAB */
+.fab{position:fixed;bottom:20px;right:14px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:50px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(245,158,11,.4);z-index:100;font-family:inherit}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+.mo.open{display:flex}
+.modal{background:#111120;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px;max-width:460px;width:100%;max-height:88vh;overflow-y:auto;position:relative}
+.mo-x{position:absolute;top:12px;right:12px;background:#161628;border:1px solid rgba(255,255,255,.08);color:#6060a0;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;border:none}
+.modal h2{font-size:18px;font-weight:800;margin-bottom:4px}
+.modal .sub2{color:#6060a0;font-size:13px;margin-bottom:18px}
+.gs{display:flex;gap:12px;margin-bottom:16px}
+.gn{width:32px;height:32px;flex-shrink:0;background:linear-gradient(135deg,#7c3aed,#db2777);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+.gc h3{font-weight:700;font-size:14px;margin-bottom:2px}
+.gc p{font-size:12px;color:#9090b0;line-height:1.6}
+
+/* TOAST */
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(12px);background:#10b981;color:#fff;padding:10px 20px;border-radius:50px;font-size:13px;font-weight:700;opacity:0;transition:all .3s;z-index:300;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:420px){
+  .av-grid{grid-template-columns:repeat(2,1fr)}
+  .btn-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="header">
+  <div class="logo">🎬 AutoVis AI</div>
+  <h1>Video Marketing AI<br>Tự Động</h1>
+  <p class="sub">Dán link hoặc upload ảnh → AI tạo video người mẫu giới thiệu sản phẩm tiếng Việt</p>
+  <div class="badges">
+    <span class="badge">✨ HeyGen AI Avatar</span>
+    <span class="badge">🎙️ Giọng Việt</span>
+    <span class="badge">📱 TikTok 9:16</span>
+  </div>
+</div>
+
+<!-- API KEY -->
+<div class="api-card">
+  <div class="api-title">🔑 HeyGen API Key <span class="free">FREE $5</span></div>
+  <div class="api-desc">
+    Đăng ký tại <a class="api-link" href="https://app.heygen.com" target="_blank">app.heygen.com</a> → Settings → API → Generate Key<br>
+    <small style="color:#505080">Không có key → vẫn tạo video nhưng không có người mẫu AI</small>
+  </div>
+  <div class="field key-wrap">
+    <span class="icon">🔑</span>
+    <input type="password" id="apiKey" placeholder="Dán HeyGen API key vào đây...">
+    <button class="eye" onclick="toggleKey()">👁</button>
+  </div>
+</div>
+
+<!-- PRODUCT -->
+<div class="card">
+  <div class="card-title">📦 Sản phẩm — Bước 1</div>
+  <div class="field">
+    <span class="icon">🔗</span>
+    <input type="text" id="urlInp" placeholder="Dán link Shopee, Lazada, TikTok Shop, Tiki...">
+  </div>
+  <div class="or">hoặc</div>
+  <div class="upz" id="upz">
+    <input type="file" id="imgInp" accept="image/*">
+    <div id="upPh">
+      <span class="up-icon">📸</span>
+      <div class="up-txt">Upload ảnh sản phẩm</div>
+      <div class="up-hint">JPG, PNG · Tối đa 10MB</div>
+    </div>
+    <div class="up-prev" id="upPrev">
+      <img id="prevImg" src="" alt="">
+      <button class="rm" onclick="rmImg(event)">✕</button>
+    </div>
+  </div>
+  <div class="err" id="errMsg"></div>
+</div>
+
+<!-- AVATAR -->
+<div class="card">
+  <div class="card-title">👤 Người mẫu AI — Bước 2</div>
+  <div class="av-grid">
+    <div class="av sel" data-id="Abigail_expressive_2024112501" onclick="selAv(this)"><em>👩</em>Abigail<br><small>Trẻ trung</small></div>
+    <div class="av" data-id="Angela-inblackskirt-20220820" onclick="selAv(this)"><em>👩‍💼</em>Angela<br><small>Chuyên nghiệp</small></div>
+    <div class="av" data-id="Anna_public_3_20240108" onclick="selAv(this)"><em>🧑‍🦰</em>Anna<br><small>Thân thiện</small></div>
+    <div class="av" data-id="Emily-inpinkskirt-20220820" onclick="selAv(this)"><em>💃</em>Emily<br><small>Năng động</small></div>
+    <div class="av" data-id="Susan-inbluetshirt-20220821" onclick="selAv(this)"><em>🙋‍♀️</em>Susan<br><small>Tự nhiên</small></div>
+    <div class="av" data-id="Lily-inpinkskirt-20220822" onclick="selAv(this)"><em>🌸</em>Lily<br><small>Dịu dàng</small></div>
+  </div>
+  <div class="field">
+    <span class="icon">🎙️</span>
+    <select id="voiceSel">
+      <option value="vi-VN-HoaiMyNeural">Hoài My – Giọng nữ miền Nam (Khuyến nghị)</option>
+      <option value="vi-VN-NamMinhNeural">Nam Minh – Giọng nam</option>
+      <option value="vi-VN-Standard-A">Giọng nữ chuẩn Việt</option>
+    </select>
+  </div>
+  <div class="dur">
+    <label>⏱️ Thời lượng</label>
+    <input type="range" id="durR" min="20" max="30" value="25" oninput="document.getElementById('durV').textContent=this.value+'s'">
+    <span class="dur-val" id="durV">25s</span>
+  </div>
+</div>
+
+<button class="btn-create" id="createBtn" onclick="startCreate()">🚀 TẠO VIDEO AI NGAY</button>
+
+<!-- PROGRESS -->
+<div class="prog" id="prog">
+  <div class="prog-top"><div class="spin"></div><span id="stepTxt">Đang chuẩn bị...</span></div>
+  <div class="pb"><div class="pb-f" id="pbF"></div></div>
+  <div class="pb-pct" id="pbPct">0%</div>
+  <div class="steps">
+    <div class="si" id="s1"><div class="si-d"></div>🔍 Phân tích sản phẩm</div>
+    <div class="si" id="s2"><div class="si-d"></div>✍️ Tạo script tiếng Việt</div>
+    <div class="si" id="s3"><div class="si-d"></div>🤖 Tạo người mẫu AI</div>
+    <div class="si" id="s4"><div class="si-d"></div>🎬 Render video + giọng đọc</div>
+    <div class="si" id="s5"><div class="si-d"></div>✅ Hoàn tất</div>
+  </div>
+  <div class="wait-note">⏱️ HeyGen mất 2–5 phút. Đừng tắt trang!</div>
+</div>
+
+<!-- RESULT -->
+<div class="result" id="result">
+  <div class="res-title">🎉 Video sẵn sàng! <span class="ai-tag" id="aiTag">✨ HeyGen AI</span></div>
+  <div class="vid-box" id="vidBox"><div class="vid-ph">🎬</div></div>
+  <div class="btn-row">
+    <a id="dlBtn" class="btn-dl" href="#" download>⬇️ Tải Video</a>
+    <button class="btn-sec" onclick="cpLink(this)">🔗 Copy Link</button>
+  </div>
+  <div class="lbl">📢 Script AI</div>
+  <div class="script-box" id="scriptBox"></div>
+  <button class="btn-sec" style="width:100%;margin-top:8px" onclick="cpScript(this)">📋 Copy Script</button>
+  <div class="lbl">📝 Caption TikTok</div>
+  <div class="tabs" id="capTabs"></div>
+  <div class="cap-box" id="capBox"></div>
+  <div class="btn-row" style="margin-top:8px">
+    <button class="btn-sec" onclick="cpCap(this)">📋 Copy Caption</button>
+    <button class="btn-sec" onclick="cpHash(this)">🏷️ Copy Hashtag</button>
+  </div>
+  <div class="lbl">🏷️ Hashtag</div>
+  <div class="hash-box" id="hashBox"></div>
+  <button class="btn-reset" onclick="resetAll()">🔄 Tạo video mới</button>
+</div>
+
+<div style="text-align:center;color:#404060;font-size:12px;padding:16px 0">AutoVis AI v4.0 · HeyGen · TikTok · Reels</div>
+</div>
+
+<button class="fab" onclick="openMo()">📖 Hướng dẫn</button>
+
+<div class="mo" id="mo" onclick="if(event.target===this)closeMo()">
+  <div class="modal">
+    <button class="mo-x" onclick="closeMo()">✕</button>
+    <h2>📖 Hướng dẫn</h2>
+    <p class="sub2">Tạo video người mẫu AI trong vài phút</p>
+    <div class="gs"><div class="gn">1</div><div class="gc"><h3>Lấy HeyGen API Key miễn phí</h3><p>Vào app.heygen.com → Đăng ký Gmail → Settings → API → Generate Key. Nhận $5 credit (~3–5 video).</p></div></div>
+    <div class="gs"><div class="gn">2</div><div class="gc"><h3>Dán key + nhập sản phẩm</h3><p>Dán API key vào ô trên. Sau đó dán link Shopee/Lazada hoặc upload ảnh sản phẩm.</p></div></div>
+    <div class="gs"><div class="gn">3</div><div class="gc"><h3>Chọn người mẫu & giọng đọc</h3><p>6 người mẫu AI, 3 giọng tiếng Việt. Chọn phù hợp với sản phẩm.</p></div></div>
+    <div class="gs"><div class="gn">4</div><div class="gc"><h3>Nhấn Tạo Video & đợi</h3><p>2–5 phút với HeyGen. Tải video → copy caption → đăng TikTok ngay!</p></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var selAvatar = "Abigail_expressive_2024112501";
+var curJob = null, timer = null, caps = [], hashes = [], curCap = 0;
+
+var imgInp = document.getElementById("imgInp");
+var upz = document.getElementById("upz");
+
+imgInp.addEventListener("change", function(e) {
+  if (e.target.files[0]) showPrev(e.target.files[0]);
+});
+
+upz.addEventListener("dragover", function(e) { e.preventDefault(); upz.classList.add("drag"); });
+upz.addEventListener("dragleave", function() { upz.classList.remove("drag"); });
+upz.addEventListener("drop", function(e) {
+  e.preventDefault(); upz.classList.remove("drag");
+  var f = e.dataTransfer.files[0];
+  if (f && f.type.indexOf("image") === 0) {
+    var dt = new DataTransfer(); dt.items.add(f); imgInp.files = dt.files; showPrev(f);
+  }
+});
+
+function showPrev(f) {
+  var r = new FileReader();
+  r.onload = function(e) {
+    document.getElementById("prevImg").src = e.target.result;
+    document.getElementById("upPh").style.display = "none";
+    document.getElementById("upPrev").style.display = "block";
+  };
+  r.readAsDataURL(f);
+}
+
+function rmImg(e) {
+  e.stopPropagation(); imgInp.value = "";
+  document.getElementById("prevImg").src = "";
+  document.getElementById("upPh").style.display = "block";
+  document.getElementById("upPrev").style.display = "none";
+}
+
+function selAv(el) {
+  document.querySelectorAll(".av").forEach(function(a) { a.classList.remove("sel"); });
+  el.classList.add("sel"); selAvatar = el.dataset.id;
+}
+
+function toggleKey() {
+  var i = document.getElementById("apiKey");
+  i.type = i.type === "password" ? "text" : "password";
+}
+
+function startCreate() {
+  var url = document.getElementById("urlInp").value.trim();
+  var file = imgInp.files[0];
+  var err = document.getElementById("errMsg");
+  err.style.display = "none";
+
+  if (!url && !file) {
+    err.textContent = "⚠️ Vui lòng nhập link hoặc upload ảnh sản phẩm.";
+    err.style.display = "block"; return;
+  }
+
+  document.getElementById("createBtn").disabled = true;
+  document.querySelectorAll(".card, .api-card").forEach(function(c) { c.style.display = "none"; });
+  document.getElementById("prog").style.display = "block";
+  document.getElementById("result").style.display = "none";
+
+  var fd = new FormData();
+  if (url) fd.append("product_url", url);
+  if (file) fd.append("image", file);
+  var key = document.getElementById("apiKey").value.trim();
+  if (key) fd.append("api_key", key);
+  fd.append("avatar_id", selAvatar);
+  fd.append("voice_id", document.getElementById("voiceSel").value);
+  fd.append("duration", document.getElementById("durR").value);
+
+  fetch("/api/create", { method: "POST", body: fd })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.detail) throw new Error(d.detail);
+      curJob = d.job_id;
+      resetSteps();
+      timer = setInterval(pollJob, 1500);
+    })
+    .catch(function(e) { showErr(e.message); });
+}
+
+function pollJob() {
+  fetch("/api/job/" + curJob)
+    .then(function(r) { return r.json(); })
+    .then(function(j) {
+      updProg(j);
+      if (j.status === "done") { clearInterval(timer); showResult(j.result); }
+      if (j.status === "error") { clearInterval(timer); showErr(j.step || "Lỗi"); }
+    })
+    .catch(function() {});
+}
+
+function updProg(j) {
+  document.getElementById("stepTxt").textContent = j.step || "";
+  var p = j.progress || 0;
+  document.getElementById("pbF").style.width = p + "%";
+  document.getElementById("pbPct").textContent = p + "%";
+  [{id:"s1",t:15},{id:"s2",t:28},{id:"s3",t:48},{id:"s4",t:85},{id:"s5",t:100}].forEach(function(m) {
+    var el = document.getElementById(m.id); el.className = "si";
+    if (p >= m.t) el.classList.add("done");
+    else if (p >= m.t - 20) el.classList.add("act");
+  });
+}
+
+function resetSteps() {
+  ["s1","s2","s3","s4","s5"].forEach(function(id) { document.getElementById(id).className = "si"; });
+}
+
+function showResult(res) {
+  document.getElementById("prog").style.display = "none";
+  var rc = document.getElementById("result"); rc.style.display = "block";
+  if (res.used_heygen) document.getElementById("aiTag").style.display = "inline";
+
+  var vb = document.getElementById("vidBox");
+  if (res.video_url) {
+    vb.querySelector(".vid-ph") && (vb.querySelector(".vid-ph").style.display = "none");
+    var v = document.createElement("video");
+    v.src = res.video_url; v.controls = true; v.setAttribute("playsinline","");
+    v.style.maxWidth = "100%"; v.style.maxHeight = "420px";
+    vb.appendChild(v);
+    document.getElementById("dlBtn").href = "/api/download/" + res.video_filename;
+    document.getElementById("dlBtn").download = res.video_filename;
+  }
+
+  document.getElementById("scriptBox").textContent = res.script || "";
+  caps = res.captions || []; hashes = res.hashtags || []; curCap = 0;
+
+  var tabs = document.getElementById("capTabs"); tabs.innerHTML = "";
+  caps.forEach(function(_, i) {
+    var b = document.createElement("button");
+    b.className = "tab" + (i === 0 ? " act" : "");
+    b.textContent = "Phiên bản " + (i+1);
+    b.onclick = function() { swCap(i); };
+    tabs.appendChild(b);
+  });
+  if (caps.length) document.getElementById("capBox").textContent = caps[0];
+  document.getElementById("hashBox").textContent = (res.main_hashtags || hashes[0] || "");
+  rc.scrollIntoView({ behavior: "smooth" });
+}
+
+function swCap(i) {
+  curCap = i;
+  document.getElementById("capBox").textContent = caps[i];
+  document.querySelectorAll(".tab").forEach(function(b, j) { b.className = "tab" + (j===i?" act":""); });
+  if (hashes[i]) document.getElementById("hashBox").textContent = hashes[i];
+}
+
+function cpScript(btn) { clip(document.getElementById("scriptBox").textContent, btn); }
+function cpCap(btn) { clip(document.getElementById("capBox").textContent, btn); }
+function cpHash(btn) { clip(document.getElementById("hashBox").textContent, btn); }
+function cpLink(btn) {
+  var v = document.querySelector("#vidBox video");
+  if (v) clip(window.location.origin + v.getAttribute("src"), btn);
+}
+
+function clip(txt, btn) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).catch(function() { fallbackClip(txt); });
+  } else { fallbackClip(txt); }
+  showToast("✅ Đã copy!");
+  if (btn) {
+    var og = btn.innerHTML; btn.innerHTML = "✅ Đã copy!"; btn.classList.add("ok");
+    setTimeout(function() { btn.innerHTML = og; btn.classList.remove("ok"); }, 2000);
+  }
+}
+function fallbackClip(txt) {
+  var ta = document.createElement("textarea"); ta.value = txt;
+  document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+}
+
+function showErr(msg) {
+  clearInterval(timer);
+  document.getElementById("prog").style.display = "none";
+  document.querySelectorAll(".card, .api-card").forEach(function(c) { c.style.display = "block"; });
+  document.getElementById("createBtn").disabled = false;
+  var e = document.getElementById("errMsg"); e.textContent = "❌ " + msg; e.style.display = "block";
+}
+
+function resetAll() {
+  clearInterval(timer); curJob = null;
+  document.getElementById("urlInp").value = ""; imgInp.value = "";
+  document.getElementById("prevImg").src = "";
+  document.getElementById("upPh").style.display = "block";
+  document.getElementById("upPrev").style.display = "none";
+  document.getElementById("errMsg").style.display = "none";
+  document.getElementById("createBtn").disabled = false;
+  document.getElementById("result").style.display = "none";
+  document.getElementById("prog").style.display = "none";
+  document.getElementById("aiTag").style.display = "none";
+  document.querySelectorAll(".card, .api-card").forEach(function(c) { c.style.display = "block"; });
+  var ov = document.querySelector("#vidBox video"); if (ov) ov.remove();
+  var ph = document.querySelector("#vidBox .vid-ph"); if (ph) ph.style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showToast(msg) {
+  var t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show");
+  setTimeout(function() { t.classList.remove("show"); }, 2400);
+}
+
+function openMo() { document.getElementById("mo").classList.add("open"); }
+function closeMo() { document.getElementById("mo").classList.remove("open"); }
+
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") closeMo();
+});
+</script>
+</body>
+</html>
