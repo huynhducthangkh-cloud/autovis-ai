@@ -1,6 +1,6 @@
 “””
-AutoVis AI - Video Marketing Tự Động
-Tích hợp HeyGen API + Smart Product Analysis
+AutoVis AI - Video Marketing Tu Dong
+Tich hop HeyGen API + Smart Product Analysis
 Version 4.0
 “””
 import os, uuid, re, time, asyncio, httpx, json, base64
@@ -26,13 +26,13 @@ app.mount(”/static”,  StaticFiles(directory=str(STATIC)),  name=“static”
 app.mount(”/outputs”, StaticFiles(directory=str(OUTPUT)),  name=“outputs”)
 templates = Jinja2Templates(directory=str(BASE / “templates”))
 
-# ── Job store ──────────────────────────────────────────────
+# — Job store —
 
 jobs: dict = {}
 def upd(jid, **kw):
 if jid in jobs: jobs[jid].update(kw)
 
-# ── HeyGen Avatars & Voices ────────────────────────────────
+# — HeyGen Avatars & Voices —
 
 AVATARS = [
 {“id”:“Abigail_expressive_2024112501”,   “name”:“Abigail”,  “emoji”:“👩”,  “style”:“Trẻ trung”},
@@ -43,12 +43,12 @@ AVATARS = [
 {“id”:“Lily-inpinkskirt-20220822”,       “name”:“Lily”,     “emoji”:“🌸”,  “style”:“Dịu dàng”},
 ]
 VOICES = [
-{“id”:“vi-VN-HoaiMyNeural”,    “name”:“Hoài My – Nữ miền Nam (Khuyến nghị)”},
-{“id”:“vi-VN-NamMinhNeural”,   “name”:“Nam Minh – Nam miền Nam”},
+{“id”:“vi-VN-HoaiMyNeural”,    “name”:“Hoài My - Nữ miền Nam (Khuyến nghị)”},
+{“id”:“vi-VN-NamMinhNeural”,   “name”:“Nam Minh - Nam miền Nam”},
 {“id”:“vi-VN-Standard-A”,      “name”:“Giọng nữ chuẩn Việt”},
 ]
 
-# ── Product Analyzer ───────────────────────────────────────
+# — Product Analyzer —
 
 PLATFORM_HINTS = {
 “shopee.vn”:    “Shopee”,
@@ -66,14 +66,14 @@ KIDS_KEYWORDS = [
 ]
 
 AGE_MAP = {
-“sơ sinh”:   (“0–12 tháng”,  “newborn”),
-“0-1”:       (“0–12 tháng”,  “newborn”),
-“1-3”:       (“1–3 tuổi”,    “toddler”),
-“toddler”:   (“1–3 tuổi”,    “toddler”),
-“4-6”:       (“4–6 tuổi”,    “preschool”),
-“mầm non”:   (“4–6 tuổi”,    “preschool”),
-“7-10”:      (“7–10 tuổi”,   “school”),
-“tiểu học”:  (“7–10 tuổi”,   “school”),
+“sơ sinh”:   (“0-12 tháng”,  “newborn”),
+“0-1”:       (“0-12 tháng”,  “newborn”),
+“1-3”:       (“1-3 tuổi”,    “toddler”),
+“toddler”:   (“1-3 tuổi”,    “toddler”),
+“4-6”:       (“4-6 tuổi”,    “preschool”),
+“mầm non”:   (“4-6 tuổi”,    “preschool”),
+“7-10”:      (“7-10 tuổi”,   “school”),
+“tiểu học”:  (“7-10 tuổi”,   “school”),
 }
 
 async def analyze_product(url: str) -> dict:
@@ -136,7 +136,7 @@ html = r.text
         else "bé trai" if any(w in text_lower for w in ["trai","boy","xanh dương","xe","robot"]) \
         else "bé"
 
-    age_label, age_key = "1–3 tuổi", "toddler"
+    age_label, age_key = "1-3 tuổi", "toddler"
     for kw, (lbl, key) in AGE_MAP.items():
         if kw in text_lower:
             age_label, age_key = lbl, key; break
@@ -164,7 +164,7 @@ except Exception as e:
     return {
         "title": "Sản phẩm thời trang bé", "description": "", "price": "",
         "platform": "Shopee", "img_url": "", "local_img": None,
-        "is_kids": True, "gender": "bé", "age_label": "1–3 tuổi",
+        "is_kids": True, "gender": "bé", "age_label": "1-3 tuổi",
         "age_key": "toddler", "style": "cute & colorful", "source_url": url,
     }
 ```
@@ -177,11 +177,11 @@ return {
 “price”: “”, “platform”: “Upload”,
 “img_url”: “”, “local_img”: img_path,
 “is_kids”: True, “gender”: “bé”,
-“age_label”: “1–3 tuổi”, “age_key”: “toddler”,
+“age_label”: “1-3 tuổi”, “age_key”: “toddler”,
 “style”: “cute & colorful”, “source_url”: “”,
 }
 
-# ── Script Generator ───────────────────────────────────────
+# — Script Generator —
 
 SCRIPT_TEMPLATES = {
 “newborn”: [
@@ -193,7 +193,7 @@ SCRIPT_TEMPLATES = {
 “Các mẹ ơi xem {title} này xinh không! “
 “Phù hợp cho {gender} {age_label}, chất vải thoáng mát dễ chịu. “
 “{price_text}Mẹ nào đang tìm đồ cho bé thì đừng bỏ lỡ nhé!”,
-“Ồ trời ơi cute quá đi! {title} – hot trend {year} đây các mẹ! “
+“Ồ trời ơi cute quá đi! {title} - hot trend {year} đây các mẹ! “
 “Bé mặc vào là đẹp ngay, chụp ảnh cực kỳ photogenic. “
 “{price_text}Bình luận GIÁ để mình báo ngay!”,
 ],
@@ -219,13 +219,13 @@ price_text = f”Giá chỉ {pr}! “ if pr else “Giá cực hấp dẫn! “
 return tpl.format(
 title   = (p.get(“title”) or “sản phẩm này”)[:45],
 gender  = p.get(“gender”,“bé”),
-age_label = p.get(“age_label”,“1–3 tuổi”),
+age_label = p.get(“age_label”,“1-3 tuổi”),
 style   = p.get(“style”,“cute”),
 price_text = price_text,
 year    = “2025”,
 )
 
-# ── Caption & Hashtag Generator ────────────────────────────
+# — Caption & Hashtag Generator —
 
 def make_content(p: dict) -> dict:
 t = (p.get(“title”) or “Thời trang bé”)[:40]
@@ -237,8 +237,8 @@ pstr = f”\n💰 Chỉ {pr}” if pr else “”
 
 ```
 captions = [
-    f"👶 {t}{pstr}\n✨ Chất vải mềm mại, an toàn cho {g}\n📦 Giao toàn quốc – Đổi trả dễ dàng\n👇 Bình luận GIÁ để đặt hàng ngay!",
-    f"🔥 HOT TREND – {t}{pstr}\n💕 Phù hợp {g} {age}\n✅ Chính hãng 100% từ {platform}\n🛒 Link mua trong bio – Đặt ngay kẻo hết!",
+    f"👶 {t}{pstr}\n✨ Chất vải mềm mại, an toàn cho {g}\n📦 Giao toàn quốc - Đổi trả dễ dàng\n👇 Bình luận GIÁ để đặt hàng ngay!",
+    f"🔥 HOT TREND - {t}{pstr}\n💕 Phù hợp {g} {age}\n✅ Chính hãng 100% từ {platform}\n🛒 Link mua trong bio - Đặt ngay kẻo hết!",
     f"😍 Cute quá các mẹ ơi!\n{t}{pstr}\n🌸 Thiết kế {p.get('style','dễ thương')}\n💬 Nhắn tin ngay để được tư vấn miễn phí!",
 ]
 
@@ -251,7 +251,7 @@ hashtags = [
 return {"captions": captions, "hashtags": hashtags}
 ```
 
-# ── HeyGen Integration ─────────────────────────────────────
+# — HeyGen Integration —
 
 async def heygen_upload(path: str, key: str) -> Optional[str]:
 try:
@@ -317,7 +317,7 @@ except Exception as e:
 print(f”[Download] {e}”)
 return “”
 
-# ── FFmpeg Fallback Video ──────────────────────────────────
+# — FFmpeg Fallback Video —
 
 async def make_ffmpeg_video(img: Optional[str], p: dict, jid: str) -> str:
 “”“Create video with FFmpeg - simple and robust”””
@@ -327,7 +327,7 @@ out = OUTPUT / f”video_{jid}.mp4”
 def safe(s, n=28):
     if not s: return "San pham"
     r = s[:n].encode("ascii","ignore").decode()
-    for c in ["'", ":", "\", '"', "[", "]"]:
+    for c in [chr(39), ':', chr(92), chr(34), '[', ']']:
         r = r.replace(c, "")
     return r or "San pham"
 
@@ -378,7 +378,7 @@ except Exception as e:
 return str(out) if (out.exists() and out.stat().st_size > 500) else ""
 ```
 
-# ── Main Job Processor ─────────────────────────────────────
+# — Main Job Processor —
 
 async def process(jid, product_url, img_path, api_key, avatar_id, voice_id, duration):
 try:
@@ -396,7 +396,7 @@ upd(jid, status=“processing”, step=“🔍 Đang phân tích sản phẩm…
         p = analyze_image_locally(img_path)
     else:
         p = {"title":"Sản phẩm","description":"","price":"","is_kids":True,
-             "gender":"bé","age_label":"1–3 tuổi","age_key":"toddler",
+             "gender":"bé","age_label":"1-3 tuổi","age_key":"toddler",
              "style":"cute","platform":"","local_img":None}
 
     upd(jid, step="✍️ Đang tạo script quảng cáo...", progress=22,
@@ -457,7 +457,7 @@ except Exception as e:
     upd(jid, status="error", step=f"❌ Lỗi: {e}", progress=0)
 ```
 
-# ── Routes ─────────────────────────────────────────────────
+# — Routes —
 
 @app.get(”/”, response_class=HTMLResponse)
 async def index(request: Request):
