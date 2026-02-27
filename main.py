@@ -52,12 +52,12 @@ def upd(jid, **kw):
     if jid in jobs: jobs[jid].update(kw)
 
 AVATARS = [
-    {"id":"Abigail_expressive_2024112501","name":"Abigail","emoji":"👩","style":"Tre trung"},
-    {"id":"Angela-inblackskirt-20220820","name":"Angela","emoji":"👩‍💼","style":"Chuyen nghiep"},
-    {"id":"Anna_public_3_20240108","name":"Anna","emoji":"🧑‍🦰","style":"Than thien"},
-    {"id":"Emily-inpinkskirt-20220820","name":"Emily","emoji":"💃","style":"Nang dong"},
-    {"id":"Susan-inbluetshirt-20220821","name":"Susan","emoji":"🙋‍♀️","style":"Tu nhien"},
-    {"id":"Lily-inpinkskirt-20220822","name":"Lily","emoji":"🌸","style":"Diu dang"},
+    {"id":"Abigail_expressive_2024112501","name":"Abigail","emoji":"(Nu)","style":"Tre trung"},
+    {"id":"Angela-inblackskirt-20220820","name":"Angela","emoji":"(Nu)","style":"Chuyen nghiep"},
+    {"id":"Anna_public_3_20240108","name":"Anna","emoji":"(Nu)","style":"Than thien"},
+    {"id":"Emily-inpinkskirt-20220820","name":"Emily","emoji":"(Nu)","style":"Nang dong"},
+    {"id":"Susan-inbluetshirt-20220821","name":"Susan","emoji":"(Nu)","style":"Tu nhien"},
+    {"id":"Lily-inpinkskirt-20220822","name":"Lily","emoji":"(Nu)","style":"Diu dang"},
 ]
 VOICES = [
     {"id":"vi-VN-HoaiMyNeural","name":"Hoai My - Nu mien Nam (Khuyen nghi)"},
